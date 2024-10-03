@@ -1,0 +1,47 @@
+---
+title: "Paper"
+format: pdf
+Author: Haowei Fan
+---
+
+```{r}
+#| include: false
+#| warning: false
+#| message: false
+#| echo: false
+#### Workspace setup ####
+library(tidyverse)
+library(knitr)
+library(dplyr)
+set.seed(912)
+#### Read data ####
+raw_data <- read_csv("usa_00002.csv")
+```
+
+```{r}
+# Find the total number of respondents of each state.
+state_counts <- raw_data %>%
+  group_by(STATEICP) %>%
+  summarise(total = n()) %>%
+  ungroup() %>%
+  mutate(STATEICP = factor(STATEICP, levels = unique(raw_data$STATEICP))) %>%
+  arrange(STATEICP)
+
+# Find the number of respondents with doctoral degree of each state.
+educd_116_counts <- raw_data %>%
+  filter(EDUCD == 116) %>%
+  group_by(STATEICP) %>%
+  summarise(total = n()) %>%
+  ungroup() %>%
+  mutate(STATEICP = factor(STATEICP, levels = unique(raw_data$STATEICP))) %>%
+  arrange(STATEICP)
+
+# Muate these two dataset.
+merged_data <- left_join(state_counts, educd_116_counts, by = "STATEICP")
+
+# Compute the rates of each states
+data <- merged_data %>%
+  mutate(ratio = total.y / total.x)
+
+print(data)
+```
