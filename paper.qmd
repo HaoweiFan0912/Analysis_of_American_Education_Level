@@ -104,8 +104,7 @@ Shown below in @tbl-column.
 
 # dispaly
 table_data <- data %>%
-  select(State, `Total respondents`, `Estimated total respondents`, 'Errors') %>%
-  head(10)
+  select(State, `Total respondents`, `Estimated total respondents`, 'Errors') 
 kable(table_data, format = "markdown")
 ```
 
