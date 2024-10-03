@@ -1,7 +1,14 @@
 ---
-title: "Paper"
+title: "Analysis of Doctoral Degrees Cross the United States"
 format: pdf
-Author: Haowei Fan
+author: 
+  - Haowei Fan
+  - Tianning He
+  - Julia Lee
+  - Shuangyuan Yang
+  - Tiffany Kim
+  - Max Li
+bibliography: references.bib
 ---
 
 ```{r}
@@ -19,6 +26,10 @@ raw_data <- read_csv("usa_00002.csv")
 ```
 
 ```{r}
+#| include: false
+#| warning: false
+#| message: false
+#| echo: false
 # Find the total number of respondents of each state.
 state_counts <- raw_data %>%
   group_by(STATEICP) %>%
@@ -42,11 +53,13 @@ merged_data <- left_join(state_counts, educd_116_counts, by = "STATEICP")
 # Compute the rates of each states
 data <- merged_data %>%
   mutate(ratio = total.y / total.x)
-
-print(data)
 ```
 
 ```{r}
+#| include: false
+#| warning: false
+#| message: false
+#| echo: false
 # estimated vales
 state_71_ratio_value <- data %>%
   filter(STATEICP == 71) %>%
@@ -69,7 +82,38 @@ data <- data %>%
     Errors = total_minus_new_column
   )
 
-print(data)
-
 ```
 
+# Introduction
+The data was obtained from IPUMS USA [@data], and the datatset used within this analysis contains information from the 2022 American Community  Survey (ACS). Through the IPUM website, the 2022 ACS along with the variables, education and sex, were selected and downloaded as a csv file. We are interested in how many respondents in California (STATEICP) have a doctorate as their highest level of education (EDUC). We know that there are 391,171 respondents of all educational levels in California (STATEICP). We searched the IPUMS website for the total population and education of all states in the United States, and screened out the total population of California and the number of people with a doctorate. We hope to estimate the total number of respondents in each state using the Laplace ratio estimation method. All analyses to understand the number of residents who have earned a doctoral degree and estimate the number of respondents for every state were conducted using the statistical programming language R[@citeR].
+
+# Overview of the ratio estimators approach
+
+The ratio estimator method is a statistical estimating tool for totals or averages by using known relationships between variables from a sample. It calculates the proportion of a specific characteristic such as doctoral degree holders to the total population in a known group like California. This proportion is then extended to estimate figures for other groups, based on the assumption that similar relationships exist throughout the population. This method is especially useful when the exact population size is unknown but can be inferred through sample proportions.
+
+# Comparison of the actual data and our estimated data.
+
+Shown below in @tbl-column.
+
+```{r}
+#| warning: false
+#| message: false
+#| echo: false
+#| label: tbl-column
+#| tbl-cap: "Comparison"
+
+# dispaly
+table_data <- data %>%
+  select(State, `Total respondents`, `Estimated total respondents`, 'Errors') %>%
+  head(10)
+kable(table_data, format = "markdown")
+```
+
+# Interpretation of Our Comparison
+
+1. The education system varies in each state, meaning that the number of doctoral degrees in California that was used within the ratio we found would not be representative of all states, and therefore, result in the discrepancy seen between our estimates and the actual data.
+2. Also, the total number of respondents in California was given to us for this analysis, and as this number could be different in actuality, the estimate we obtained would not reflect the true respondent count within each state. 
+
+\newpage
+
+# References
