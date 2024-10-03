@@ -45,3 +45,31 @@ data <- merged_data %>%
 
 print(data)
 ```
+
+```{r}
+# estimated vales
+state_71_ratio_value <- data %>%
+  filter(STATEICP == 71) %>%
+  pull(ratio)
+data <- data %>%
+  mutate(new_column = round(total.y / state_71_ratio_value))
+
+# Eoros
+data <- data %>%
+  mutate(total_minus_new_column = total.x - new_column)
+
+# Rename varibales
+data <- data %>%
+  rename(
+    State = STATEICP,
+    `Total respondents` = total.x,
+    `Total doctoral degree` = total.y,
+    `Doctoral degree rate` = ratio,
+    `Estimated total respondents` = new_column,
+    Errors = total_minus_new_column
+  )
+
+print(data)
+
+```
+
